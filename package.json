@@ -1,0 +1,15 @@
+{
+  "name": "@amanda/interactionmenu",
+  "version": "1.0.0",
+  "description": "An interaction button handler for ThunderStorm",
+  "main": "index.js",
+  "types": "./typings/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PapiOphidian",
+  "license": "MIT",
+  "dependencies": {
+    "thunderstorm": "github:AmandaDiscord/ThunderStorm"
+  }
+}
