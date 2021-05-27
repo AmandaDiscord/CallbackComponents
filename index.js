@@ -88,7 +88,7 @@ class InteractionMenu {
 		if (!this.message) return;
 		if (remove) {
 			const embed = this.message.embeds[0] ? this.message.embeds[0] : null;
-			const content = this.message.content ? this.message.content : null;
+			const content = this.message.content ? this.message.content : "";
 			const ops = { buttons: [] };
 			if (embed) Object.assign(ops, { embed: embed });
 			await this.message.edit(content, ops);
@@ -129,7 +129,7 @@ class InteractionMenu {
 		switch (action.remove) {
 			case "that":
 				const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
-				const content = interaction.message.content ? interaction.message.content : null;
+				const content = interaction.message.content ? interaction.message.content : "";
 				const ops = { buttons: [new Discord.ButtonRow(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
 				if (embed) Object.assign(ops, { embed: embed });
 				interaction.message.edit(content, ops);
@@ -146,14 +146,14 @@ class InteractionMenu {
 		if (action.disable === "that") {
 			action.disabled = true;
 			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
-			const content = interaction.message.content ? interaction.message.content : null;
+			const content = interaction.message.content ? interaction.message.content : "";
 			const ops = { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
 			if (embed) Object.assign(ops, { embed: embed });
 			interaction.message.edit(content, ops);
 		} else if (action.disable == "all") {
 			menu.actions.forEach(a => a.disabled = true);
 			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
-			const content = interaction.message.content ? interaction.message.content : null;
+			const content = interaction.message.content ? interaction.message.content : "";
 			const ops = { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
 			if (embed) Object.assign(ops, { embed: embed });
 			interaction.message.edit(content, ops);
