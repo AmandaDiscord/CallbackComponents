@@ -71,7 +71,9 @@ class InteractionMenu {
 	 */
 	async create(content, options) {
 		const buttons = [new Discord.ButtonRow(this.actions.map(i => InteractionMenu.#convertActionToButton(i, this.channel.client)))];
-		const payload = await Discord.TextBasedChannel.transform(Discord.Util.isObject(content) && content && !content.constructor ? Object.assign({}, content, { buttons: buttons }) : content, Discord.Util.isObject(content) ? undefined : Object.assign({}, options || {}, { buttons: buttons }));
+		const payload1 = await Discord.TextBasedChannel.transform(content, options);
+		const payload2 = await Discord.TextBasedChannel.transform("", { buttons: buttons })
+		const payload = Object.assign(payload2, payload1)
 		const data = await this.channel.client._snow.channel.createMessage(this.channel.id, payload, { disableEveryone: options ? options.disableEveryone || false : this.channel.client.options.disableEveryone || false });
 		const msg = new Discord.Message(data, this.channel.client);
 		menus.set(msg.id, this);
@@ -84,7 +86,13 @@ class InteractionMenu {
 	 */
 	async destroy(remove = true) {
 		if (!this.message) return;
-		if (remove) await this.message.edit("", { buttons: [] });
+		if (remove) {
+			const embed = this.message.embeds[0] ? this.message.embeds[0] : null;
+			const content = this.message.content ? this.message.content : null;
+			const ops = { buttons: [] };
+			if (embed) Object.assign(ops, { embed: embed });
+			await this.message.edit(content, ops);
+		}
 		menus.delete(this.message.id);
 	}
 
@@ -120,7 +128,11 @@ class InteractionMenu {
 		}
 		switch (action.remove) {
 			case "that":
-				interaction.message.edit("", { buttons: [new Discord.ButtonRow(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] });
+				const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+				const content = interaction.message.content ? interaction.message.content : null;
+				const ops = { buttons: [new Discord.ButtonRow(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
+				if (embed) Object.assign(ops, { embed: embed });
+				interaction.message.edit(content, ops);
 				menu.actions.splice(menu.actions.indexOf(action), 1);
 				break;
 			case "all":
@@ -133,10 +145,18 @@ class InteractionMenu {
 		}
 		if (action.disable === "that") {
 			action.disabled = true;
-			interaction.message.edit("", { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] });
+			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+			const content = interaction.message.content ? interaction.message.content : null;
+			const ops = { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
+			if (embed) Object.assign(ops, { embed: embed });
+			interaction.message.edit(content, ops);
 		} else if (action.disable == "all") {
 			menu.actions.forEach(a => a.disabled = true);
-			interaction.message.edit("", { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] });
+			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+			const content = interaction.message.content ? interaction.message.content : null;
+			const ops = { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
+			if (embed) Object.assign(ops, { embed: embed });
+			interaction.message.edit(content, ops);
 		}
 	}
 
