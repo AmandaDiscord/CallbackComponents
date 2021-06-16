@@ -9,7 +9,7 @@ let idSequence = 0;
 
 class InteractionMenu {
 	/**
-	 * @param {Discord.PartialChannel} channel
+	 * @param {import("thunderstorm/src/structures/interfaces/TextBasedChannel")} channel
 	 * @param {Array<InteractionMessageAction>} actions An Array of 5 max actions
 	 */
 	constructor(channel, actions) {
@@ -18,7 +18,7 @@ class InteractionMenu {
 		this.actions = actions;
 		this.idSequence = idSequence;
 		/**
-		 * @type {Discord.Message}
+		 * @type {Discord.Message | null}
 		 */
 		this.message = null;
 	}
@@ -38,7 +38,6 @@ class InteractionMenu {
 		 * @type {import("thunderstorm").MessageActionRowComponentResolvable}
 		 */
 		const value = {};
-		// @ts-ignore
 		if (action.emoji) value["emoji"] = action.emoji;
 		value["style"] = action.url ? "LINK" : action.style
 		if (action.label) value["label"] = action.label;
@@ -60,10 +59,10 @@ class InteractionMenu {
 	/**
 	 * Creates the menu with specified options.
 	 * Do not include components in the message options. InteractionMenu will do this for you based on the actions you provided in the constructor.
-	 * @param {Discord.MessageOptions} [options]
+	 * @param {Discord.MessageOptions} options
 	 */
 	async create(options) {
-		const buttons = new Discord.MessageActionRow({ type: "ACTION_ROW" }).addComponents(this.actions.map(i => InteractionMenu.#convertActionToButton(i)));
+		const buttons = new Discord.MessageActionRow().addComponents(this.actions.map(i => InteractionMenu.#convertActionToButton(i)));
 		const msg = await this.channel.send({ components: [buttons], ...options })
 		menus.set(msg.id, this);
 		this.message = msg;
@@ -76,9 +75,9 @@ class InteractionMenu {
 	async destroy(remove = true) {
 		if (!this.message) return;
 		if (remove) {
-			const embed = this.message.embeds[0] ? this.message.embeds[0] : null;
+			const embeds = this.message.embeds.length ? this.message.embeds : null;
 			const content = this.message.content ? this.message.content : "";
-			const ops = { components: [], content, embed };
+			const ops = { components: [], content, embeds };
 			await this.message.edit(ops).catch(() => void 0);
 		}
 		menus.delete(this.message.id);
@@ -113,16 +112,16 @@ class InteractionMenu {
 		}
 		switch (action.remove) {
 			case "that":
-				const embed1 = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+				const embeds1 = interaction.message.embeds.length ? interaction.message.embeds : null;
 				const content1 = interaction.message.content ? interaction.message.content : "";
-				const ops = { content: content1, embed: embed1, components: [new Discord.MessageActionRow({ type: "ACTION_ROW" }).addComponents(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a)))] };
+				const ops = { content: content1, embeds: embeds1, components: [new Discord.MessageActionRow().addComponents(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a)))] };
 				await interaction.message.edit(ops);
 				menu.actions.splice(menu.actions.indexOf(action), 1);
 				break;
 			case "all":
-				const embed2 = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+				const embeds2 = interaction.message.embeds.length ? interaction.message.embeds : null;
 				const content2 = interaction.message.content ? interaction.message.content : "";
-				await interaction.message.edit({ content: content2, embed: embed2, components: [] });
+				await interaction.message.edit({ content: content2, embeds: embeds2, components: [] });
 				break;
 			case "message":
 				await menu.destroy(false);
@@ -131,15 +130,15 @@ class InteractionMenu {
 		}
 		if (action.disable === "that") {
 			action.disabled = true;
-			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+			const embeds = interaction.message.embeds ? interaction.message.embeds : null;
 			const content = interaction.message.content ? interaction.message.content : "";
-			const ops = { content, embed, components: [new Discord.MessageActionRow({ type: "ACTION_ROW" }).addComponents(menu.actions.map(a => InteractionMenu.#convertActionToButton(a)))] };
+			const ops = { content, embeds, components: [new Discord.MessageActionRow().addComponents(menu.actions.map(a => InteractionMenu.#convertActionToButton(a)))] };
 			await interaction.message.edit(ops);
 		} else if (action.disable == "all") {
 			menu.actions.forEach(a => a.disabled = true);
-			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+			const embeds = interaction.message.embeds ? interaction.message.embeds : null;
 			const content = interaction.message.content ? interaction.message.content : "";
-			const ops = { content, embed, components: [new Discord.MessageActionRow({ type: "ACTION_ROW" }).addComponents(menu.actions.map(a => InteractionMenu.#convertActionToButton(a)))] };
+			const ops = { content, embeds, components: [new Discord.MessageActionRow().addComponents(menu.actions.map(a => InteractionMenu.#convertActionToButton(a)))] };
 			await interaction.message.edit(ops);
 		}
 
