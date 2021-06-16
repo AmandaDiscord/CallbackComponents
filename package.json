@@ -10,6 +10,6 @@
   "author": "PapiOphidian",
   "license": "MIT",
   "dependencies": {
-    "thunderstorm": "github:AmandaDiscord/ThunderStorm"
+    "thunderstorm": "github:AmandaDiscord/ThunderStorm#dev"
   }
 }

@@ -9,8 +9,8 @@ let idSequence = 0;
 
 class InteractionMenu {
 	/**
-	 * @param {Discord.PartialChannel} channel
-	 * @param {Array<InteractionMessageAction>} actions
+	 * @param {import("thunderstorm/src/structures/interfaces/TextBasedChannel")} channel
+	 * @param {Array<InteractionMessageAction>} actions An Array of 5 max actions
 	 */
 	constructor(channel, actions) {
 		this.menus = menus;
@@ -18,17 +18,15 @@ class InteractionMenu {
 		this.actions = actions;
 		this.idSequence = idSequence;
 		/**
-		 * @type {Discord.Message}
+		 * @type {Discord.Message | null}
 		 */
 		this.message = null;
 	}
 
 	/**
 	 * @param {InteractionMessageAction} action
-	 * @param {Discord.Client} client
-	 * @returns {Discord.Button}
 	 */
-	static #convertActionToButton(action, client) {
+	static #convertActionToButton(action) {
 		if (!action.id) {
 			let id;
 			if (action.url) id = action.url;
@@ -37,22 +35,17 @@ class InteractionMenu {
 			action.id = id;
 		}
 		/**
-		 * @type {import("@amanda/discordtypings").ButtonData}
+		 * @type {import("thunderstorm").MessageActionRowComponentResolvable}
 		 */
 		const value = {};
 		if (action.emoji) value["emoji"] = action.emoji;
-		value["style"] = action.url ? 5 :
-			action.style === "primary" ? 1 :
-			action.style === "secondary" ? 2 :
-			action.style === "success" ? 3 :
-			action.style === "danger" ? 4 :
-			action.style === "link" ? 5 : 1;
+		value["style"] = action.url ? "LINK" : action.style
 		if (action.label) value["label"] = action.label;
 		if (action.url) value["url"] = action.url;
 		if (!action.url) value["custom_id"] = action.id;
 		value["type"] = 2;
 		value["disabled"] = action.disabled || false;
-		return new Discord.Button(value, client);
+		return value;
 	}
 
 	get nextID() {
@@ -64,18 +57,13 @@ class InteractionMenu {
 	}
 
 	/**
-	 * Creates the menu with specified content and options.
-	 * Do not include buttons in the message options. InteractionMenu will do this for you based on the actions you provided in the constructor.
-	 * @param {Discord.StringResolvable} content
-	 * @param {Discord.MessageOptions} [options]
+	 * Creates the menu with specified options.
+	 * Do not include components in the message options. InteractionMenu will do this for you based on the actions you provided in the constructor.
+	 * @param {Discord.MessageOptions} options
 	 */
-	async create(content, options) {
-		const buttons = [new Discord.ButtonRow(this.actions.map(i => InteractionMenu.#convertActionToButton(i, this.channel.client)))];
-		const payload1 = await Discord.TextBasedChannel.transform(content, options);
-		const payload2 = await Discord.TextBasedChannel.transform("", { buttons: buttons })
-		const payload = Object.assign(payload2, payload1)
-		const data = await this.channel.client._snow.channel.createMessage(this.channel.id, payload, { disableEveryone: options ? options.disableEveryone || false : this.channel.client.options.disableEveryone || false });
-		const msg = new Discord.Message(data, this.channel.client);
+	async create(options) {
+		const buttons = new Discord.MessageActionRow().addComponents(this.actions.map(i => InteractionMenu.#convertActionToButton(i)));
+		const msg = await this.channel.send({ components: [buttons], ...options })
 		menus.set(msg.id, this);
 		this.message = msg;
 		return this.message;
@@ -87,11 +75,10 @@ class InteractionMenu {
 	async destroy(remove = true) {
 		if (!this.message) return;
 		if (remove) {
-			const embed = this.message.embeds[0] ? this.message.embeds[0] : null;
+			const embeds = this.message.embeds.length ? this.message.embeds : null;
 			const content = this.message.content ? this.message.content : "";
-			const ops = { buttons: [] };
-			if (embed) Object.assign(ops, { embed: embed });
-			await this.message.edit(content, ops);
+			const ops = { components: [], content, embeds };
+			await this.message.edit(ops).catch(() => void 0);
 		}
 		menus.delete(this.message.id);
 	}
@@ -99,19 +86,16 @@ class InteractionMenu {
 	/**
 	 * Handles data from interactions where it is a button and a menu that exists.
 	 * You will need to pong or respond to the interaction on your own.
-	 * @param {Discord.InteractionMessage} interaction
+	 * @param {Discord.MessageComponentInteraction} interaction
 	 */
-	static handle(interaction) {
-		if (interaction.type !== "button" || !interaction.message) return;
+	static async handle(interaction) {
+		if (!interaction.isMessageComponent() || !interaction.message) return;
 		const menu = menus.get(interaction.message.id);
 		if (!menu) return;
-		const action = menu.actions.find(a => a.id === interaction.component.id);
+		const action = menu.actions.find(a => a.id === interaction.customID);
 		if (!action) return;
-		if ((action.allowedUsers && !action.allowedUsers.includes(interaction.author.id)) || (action.deniedUsers && action.deniedUsers.includes(interaction.author.id))) return;
+		if ((action.allowedUsers && !action.allowedUsers.includes(interaction.user.id)) || (action.deniedUsers && action.deniedUsers.includes(interaction.user.id))) return;
 
-		if (action.actionType === "js") {
-			action.actionData(interaction.message, interaction.author);
-		}
 		switch (action.ignore) {
 			case "that":
 				action.actionType = "none";
@@ -123,47 +107,50 @@ class InteractionMenu {
 				menu.actions.forEach(a => a.actionType = "none");
 				break;
 			case "total":
-				menu.destroy();
+				await menu.destroy();
 				break;
 		}
 		switch (action.remove) {
 			case "that":
-				const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
-				const content = interaction.message.content ? interaction.message.content : "";
-				const ops = { buttons: [new Discord.ButtonRow(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
-				if (embed) Object.assign(ops, { embed: embed });
-				interaction.message.edit(content, ops);
+				const embeds1 = interaction.message.embeds.length ? interaction.message.embeds : null;
+				const content1 = interaction.message.content ? interaction.message.content : "";
+				const ops = { content: content1, embeds: embeds1, components: [new Discord.MessageActionRow().addComponents(menu.actions.filter(a => a.id !== action.id).map(a => InteractionMenu.#convertActionToButton(a)))] };
+				await interaction.message.edit(ops);
 				menu.actions.splice(menu.actions.indexOf(action), 1);
 				break;
 			case "all":
-				interaction.message.edit("", { buttons: [] });
+				const embeds2 = interaction.message.embeds.length ? interaction.message.embeds : null;
+				const content2 = interaction.message.content ? interaction.message.content : "";
+				await interaction.message.edit({ content: content2, embeds: embeds2, components: [] });
 				break;
 			case "message":
-				menu.destroy(false);
-				interaction.message.delete();
+				await menu.destroy(false);
+				await interaction.message.delete();
 				break;
 		}
 		if (action.disable === "that") {
 			action.disabled = true;
-			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+			const embeds = interaction.message.embeds ? interaction.message.embeds : null;
 			const content = interaction.message.content ? interaction.message.content : "";
-			const ops = { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
-			if (embed) Object.assign(ops, { embed: embed });
-			interaction.message.edit(content, ops);
+			const ops = { content, embeds, components: [new Discord.MessageActionRow().addComponents(menu.actions.map(a => InteractionMenu.#convertActionToButton(a)))] };
+			await interaction.message.edit(ops);
 		} else if (action.disable == "all") {
 			menu.actions.forEach(a => a.disabled = true);
-			const embed = interaction.message.embeds[0] ? interaction.message.embeds[0] : null;
+			const embeds = interaction.message.embeds ? interaction.message.embeds : null;
 			const content = interaction.message.content ? interaction.message.content : "";
-			const ops = { buttons: [new Discord.ButtonRow(menu.actions.map(a => InteractionMenu.#convertActionToButton(a, interaction.client)))] };
-			if (embed) Object.assign(ops, { embed: embed });
-			interaction.message.edit(content, ops);
+			const ops = { content, embeds, components: [new Discord.MessageActionRow().addComponents(menu.actions.map(a => InteractionMenu.#convertActionToButton(a)))] };
+			await interaction.message.edit(ops);
+		}
+
+		if (action.actionType === "js") {
+			action.actionData(interaction.message, interaction.user);
 		}
 	}
 
 	/**
 	 * Handles data from interactions where it is a button and a menu that exists.
 	 * You will need to pong or respond to the interaction on your own.
-	 * @param {Discord.InteractionMessage} interaction
+	 * @param {Discord.MessageComponentInteraction} interaction
 	 */
 	handle(interaction) {
 		return InteractionMenu.handle(interaction);
@@ -178,7 +165,7 @@ module.exports = InteractionMenu;
 /**
  * @typedef {Object} InteractionMessageAction
  * @property {{ id: string | null, name: string, animated?: boolean }} [emoji]
- * @property {import("thunderstorm").Button["style"]} [style] The style of the button. It's not required for if a url is provided. If not, it defaults to "primary".
+ * @property {import("thunderstorm").MessageButtonStyle} [style] The style of the button. It's not required for if a url is provided. If not, it defaults to "primary".
  * @property {string} [label]
  * @property {string} [url] If URL is available, all other properties are ignored as no press event is sent.
  * @property {Array<string>} [allowedUsers]
