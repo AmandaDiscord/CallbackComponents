@@ -1,7 +1,7 @@
 {
-  "name": "@amanda/interactionmenu",
+  "name": "callback-components",
   "version": "1.0.0",
-  "description": "An interaction button handler for ThunderStorm",
+  "description": "A component interaction handler for Discord.js API compatible modules",
   "main": "index.js",
   "types": "./typings/index.d.ts",
   "scripts": {
@@ -9,7 +9,8 @@
   },
   "author": "PapiOphidian",
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
+    "discord.js": "^13.x",
     "thunderstorm": "github:AmandaDiscord/ThunderStorm"
   }
 }

@@ -1,0 +1,16 @@
+{
+	"include": [
+		"./**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"typings"
+	],
+	"compilerOptions": {
+		"allowJs": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"outDir": "./typings",
+		"skipLibCheck": true
+	}
+}

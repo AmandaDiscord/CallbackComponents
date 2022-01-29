@@ -1,64 +1,42 @@
-import Discord from "thunderstorm";
-
-declare class InteractionMenu {
-	public menus: Map<string, InteractionMenu>;
-	public static menus: Map<string, InteractionMenu>;
-	public channel: import("thunderstorm/src/structures/interfaces/TextBasedChannel");
-	public actions: Array<InteractionMessageAction>;
-	public idSequence: number;
-	public static idSequence: number;
-	public message: Discord.Message | null;
-
-	public constructor(channel: import("thunderstorm/src/structures/interfaces/TextBasedChannel"), actions: Array<InteractionMessageAction>);
-
-	private static #convertActionToButton(action: InteractionMessageAction): Discord.MessageActionRowComponentResolvable;
-
-	public get nextID(): string;
-	public static get nextID(): string;
-
-	/**
-	 * Creates the menu with specified content and options.
-	 * Do not include buttons in the message options. InteractionMenu will do this for you based on the actions you provided in the constructor.
-	 */
-	public create(options: Discord.MessageOptions): Promise<Discord.Message>;
-	/**
-	 * Remove the menu from storage and optionally delete its buttons.
-	 */
-	public destroy(remove?: boolean): Promise<void>;
-	/**
-	 * Handles data from interactions where it is a button and a menu that exists.
-	 * You will need to pong or respond to the interaction on your own.
-	 */
-	public static handle(interaction: Discord.MessageComponentInteraction): void;
-	/**
-	 * Handles data from interactions where it is a button and a menu that exists.
-	 * You will need to pong or respond to the interaction on your own.
-	 */
-	public handle(interaction: Discord.MessageComponentInteraction): void;
+export type TheCord = typeof import("thunderstorm") | typeof import("discord.js");
+/**
+ * @typedef {typeof import("thunderstorm") | typeof import("discord.js")} TheCord
+ */
+/**
+ * @type {Map<string, BetterComponent>}
+ */
+export const components: Map<string, BetterComponent>;
+export let idSequence: number;
+export class BetterComponent {
+    /**
+     * @private
+     */
+    private static get "__#1@#nextID"();
+    /**
+     * Handles data from interactions where it is a button that exists.
+     * You will need to pong or respond to the interaction on your own.
+     * @param {TheCord["MessageComponentInteraction"]["prototype"]} interaction
+     */
+    static handle(interaction: TheCord["MessageComponentInteraction"]["prototype"]): void;
+    /**
+     * @param {ConstructorParameters<TheCord["MessageButton"]>["0"]} info Do not include customId. The lib assigns it for you
+     */
+    constructor(info: ConstructorParameters<TheCord["MessageButton"]>["0"]);
+    info: import("discord.js").MessageButton | import("discord-typings").MessageComponentData | import("thunderstorm").MessageButtonOptions | import("discord.js").MessageButtonOptions | import("discord-api-types").APIButtonComponent;
+    /**
+     * @type {string | null}
+     */
+    id: string | null;
+    /**
+     * @type {((interaction: TheCord["MessageComponentInteraction"]["prototype"], component: BetterComponent) => unknown) | null}
+     */
+    callback: (interaction: TheCord["MessageComponentInteraction"]["prototype"], component: BetterComponent) => unknown;
+    /** @type {TheCord["MessageButton"]["prototype"]} */
+    component: TheCord["MessageButton"]["prototype"];
+    toComponent(): import("thunderstorm/src/structures/MessageButton") | import("discord.js").MessageButton;
+    /**
+     * @param {(interaction: TheCord["MessageComponentInteraction"]["prototype"], component: BetterComponent) => unknown} fn
+     */
+    setCallback(fn: (interaction: TheCord["MessageComponentInteraction"]["prototype"], component: BetterComponent) => unknown): BetterComponent;
+    destroy(): BetterComponent;
 }
-
-type InteractionMessageAction = {
-	emoji?: {
-		id: string | null;
-		name: string;
-		animated?: boolean;
-	};
-	/**
-	 * The style of the button. It's not required for if a url is provided. If not, it defaults to "primary".
-	 */
-	style?: import("thunderstorm").MessageButtonStyle;
-	label?: string;
-	/**
-	 * If URL is available, all other properties are ignored as no press event is sent.
-	 */
-	url?: string;
-	allowedUsers?: Array<string>;
-	deniedUsers?: Array<string>;
-	ignore?: "that" | "thatTotal" | "all" | "total";
-	remove?: "that" | "all" | "message";
-	disable?: "that" | "all";
-	actionType?: "js" | "none";
-	actionData?(message?: Discord.Message, user?: Discord.User): any;
-}
-
-export = InteractionMenu;
