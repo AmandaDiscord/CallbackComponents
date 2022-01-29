@@ -1,14 +1,4 @@
-/** @type {typeof import("thunderstorm") | typeof import("discord.js")} */
-let Discord;
-try {
-	Discord = require("thunderstorm");
-} catch {
-	Discord = require("discord.js");
-}
-
-/**
- * @typedef {typeof import("thunderstorm") | typeof import("discord.js")} TheCord
- */
+const Discord = require("thunderstorm")
 
 /**
  * @type {Map<string, BetterComponent>}
@@ -19,7 +9,7 @@ let idSequence = 0;
 
 class BetterComponent {
 	/**
-	 * @param {ConstructorParameters<TheCord["MessageButton"]>["0"]} info Do not include customId. The lib assigns it for you
+	 * @param {import("thunderstorm").MessageButtonOptions} info Do not include customId. The lib assigns it for you
 	 */
 	constructor(info) {
 		this.info = info;
@@ -32,10 +22,10 @@ class BetterComponent {
 		}
 		else this.id = null;
 		/**
-		 * @type {((interaction: TheCord["MessageComponentInteraction"]["prototype"], component: BetterComponent) => unknown) | null}
+		 * @type {((interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown) | null}
 		 */
 		this.callback = null;
-		/** @type {TheCord["MessageButton"]["prototype"]} */
+		/** @type {import("thunderstorm").MessageButton} */
 		this.component = new Discord.MessageButton(Object.assign({}, info, { customId: this.id || undefined }));
 	}
 
@@ -51,7 +41,7 @@ class BetterComponent {
 	}
 
 	/**
-	 * @param {(interaction: TheCord["MessageComponentInteraction"]["prototype"], component: BetterComponent) => unknown} fn
+	 * @param {(interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown} fn
 	 */
 	setCallback(fn) {
 		this.callback = fn;
@@ -66,7 +56,7 @@ class BetterComponent {
 	/**
 	 * Handles data from interactions where it is a component that exists.
 	 * You will need to pong or respond to the interaction on your own.
-	 * @param {TheCord["MessageComponentInteraction"]["prototype"]} interaction
+	 * @param {import("thunderstorm").MessageComponentInteraction} interaction
 	 */
 	static handle(interaction) {
 		if (!interaction.isMessageComponent()) return;

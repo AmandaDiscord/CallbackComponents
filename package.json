@@ -1,7 +1,7 @@
 {
   "name": "callback-components",
   "version": "1.0.0",
-  "description": "A component interaction handler for Discord.js API compatible modules",
+  "description": "A component interaction handler for ThunderStorm",
   "main": "index.js",
   "types": "./typings/index.d.ts",
   "scripts": {
@@ -9,8 +9,7 @@
   },
   "author": "PapiOphidian",
   "license": "MIT",
-  "peerDependencies": {
-    "discord.js": "^13.x",
+  "dependencies": {
     "thunderstorm": "github:AmandaDiscord/ThunderStorm"
   }
 }
