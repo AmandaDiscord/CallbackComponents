@@ -14,10 +14,11 @@ class BetterComponent {
 	constructor(info) {
 		this.info = info;
 		if (!this.info.url) {
+			const id = BetterComponent.#nextID
 			/**
 			 * @type {string | null}
 			 */
-			this.id = BetterComponent.#nextID;
+			this.id = id;
 			components.set(this.id, this);
 		}
 		else this.id = null;
