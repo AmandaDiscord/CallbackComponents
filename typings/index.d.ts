@@ -15,10 +15,10 @@ export class BetterComponent {
      */
     static handle(interaction: import("thunderstorm/src/structures/MessageComponentInteraction")): void;
     /**
-     * @param {import("thunderstorm").MessageButtonOptions} info Do not include customId. The lib assigns it for you
+     * @param {import("thunderstorm").MessageButtonOptions | import("thunderstorm").MessageSelectMenuOptions} info Do not include customId. The lib assigns it for you
      */
-    constructor(info: import("thunderstorm").MessageButtonOptions);
-    info: Discord.MessageButtonOptions;
+    constructor(info: import("thunderstorm").MessageButtonOptions | import("thunderstorm").MessageSelectMenuOptions);
+    info: Discord.MessageButtonOptions | Discord.MessageSelectMenuOptions;
     /**
      * @type {string | null}
      */
@@ -27,9 +27,9 @@ export class BetterComponent {
      * @type {((interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown) | null}
      */
     callback: (interaction: import("thunderstorm/src/structures/MessageComponentInteraction"), component: BetterComponent) => unknown;
-    /** @type {import("thunderstorm").MessageButton} */
-    component: import("thunderstorm/src/structures/MessageButton");
-    toComponent(): import("thunderstorm/src/structures/MessageButton");
+    /** @type {import("thunderstorm").MessageButton | import("thunderstorm").MessageSelectMenu} */
+    component: import("thunderstorm/src/structures/MessageButton") | import("thunderstorm/src/structures/MessageSelectMenu");
+    toComponent(): import("thunderstorm/src/structures/MessageButton") | import("thunderstorm/src/structures/MessageSelectMenu");
     /**
      * @param {(interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown} fn
      */

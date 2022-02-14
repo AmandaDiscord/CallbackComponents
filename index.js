@@ -9,11 +9,11 @@ let idSequence = 0;
 
 class BetterComponent {
 	/**
-	 * @param {import("thunderstorm").MessageButtonOptions} info Do not include customId. The lib assigns it for you
+	 * @param {import("thunderstorm").MessageButtonOptions | import("thunderstorm").MessageSelectMenuOptions} info Do not include customId. The lib assigns it for you
 	 */
 	constructor(info) {
 		this.info = info;
-		if (!this.info.url) {
+		if ((this.info.type === "BUTTON" && !this.info.url) || this.info.type === "SELECT_MENU") {
 			const id = BetterComponent.#nextID
 			/**
 			 * @type {string | null}
@@ -26,8 +26,9 @@ class BetterComponent {
 		 * @type {((interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown) | null}
 		 */
 		this.callback = null;
-		/** @type {import("thunderstorm").MessageButton} */
-		this.component = new Discord.MessageButton(Object.assign({}, info, { customId: this.id || undefined }));
+		const data = Object.assign({}, info, { customId: this.id || undefined })
+		/** @type {import("thunderstorm").MessageButton | import("thunderstorm").MessageSelectMenu} */
+		this.component = this.info.type === "BUTTON" ? new Discord.MessageButton(data) : new Discord.MessageSelectMenu(data);
 	}
 
 	/**
