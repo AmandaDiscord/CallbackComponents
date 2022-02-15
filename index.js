@@ -31,7 +31,7 @@ class BetterComponent {
 		this.callback = null;
 		const data = Object.assign({}, info, { customId: this.id || undefined })
 		/** @type {import("thunderstorm").MessageButton | import("thunderstorm").MessageSelectMenu} */
-		this.component = this.info.type === "BUTTON" ? new Discord.MessageButton(data) : new Discord.MessageSelectMenu(data);
+		this.component = type === "btn" ? new Discord.MessageButton(data) : new Discord.MessageSelectMenu(data);
 	}
 
 	/**
