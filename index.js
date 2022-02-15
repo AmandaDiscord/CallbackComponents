@@ -13,7 +13,10 @@ class BetterComponent {
 	 */
 	constructor(info) {
 		this.info = info;
-		if ((this.info.type === "BUTTON" && !this.info.url) || this.info.type === "SELECT_MENU") {
+		/** @type {"btn" | "slct"} */
+		let type = "btn"
+		if (this.info.type === "SELECT_MENU" || this.info.type === Discord.Constants.MessageComponentTypes.SELECT_MENU) type = "slct"
+		if ((type === "btn" && !this.info.url) || type === "slct") {
 			const id = BetterComponent.#nextID
 			/**
 			 * @type {string | null}
@@ -23,7 +26,7 @@ class BetterComponent {
 		}
 		else this.id = null;
 		/**
-		 * @type {((interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown) | null}
+		 * @type {((interaction: import("thunderstorm").MessageComponentInteraction | import("thunderstorm").SelectMenuInteraction, component: BetterComponent) => unknown) | null}
 		 */
 		this.callback = null;
 		const data = Object.assign({}, info, { customId: this.id || undefined })
@@ -43,7 +46,7 @@ class BetterComponent {
 	}
 
 	/**
-	 * @param {(interaction: import("thunderstorm").MessageComponentInteraction, component: BetterComponent) => unknown} fn
+	 * @param {(interaction: import("thunderstorm").MessageComponentInteraction | import("thunderstorm").SelectMenuInteraction, component: BetterComponent) => unknown} fn
 	 */
 	setCallback(fn) {
 		this.callback = fn;
@@ -58,7 +61,7 @@ class BetterComponent {
 	/**
 	 * Handles data from interactions where it is a component that exists.
 	 * You will need to pong or respond to the interaction on your own.
-	 * @param {import("thunderstorm").MessageComponentInteraction} interaction
+	 * @param {import("thunderstorm").MessageComponentInteraction | import("thunderstorm").SelectMenuInteraction} interaction
 	 */
 	static handle(interaction) {
 		if (!interaction.isMessageComponent()) return;
