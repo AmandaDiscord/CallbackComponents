@@ -1,5 +1,3 @@
-const Discord = require("thunderstorm")
-
 /**
  * @type {Map<string, BetterComponent>}
  */
@@ -9,15 +7,15 @@ let idSequence = 0;
 
 class BetterComponent {
 	/**
-	 * @param {import("thunderstorm").MessageButtonOptions | import("thunderstorm").MessageSelectMenuOptions} info Do not include customId. The lib assigns it for you
+	 * @param {import("discord-typings").Button | import("discord-typings").SelectMenu} info Do not include custom_id. The lib assigns it for you
 	 */
 	constructor(info) {
 		this.info = info;
 		/** @type {"btn" | "slct"} */
-		let type = "btn"
-		if (this.info.type === "SELECT_MENU" || this.info.type === Discord.Constants.MessageComponentTypes.SELECT_MENU) type = "slct"
+		let type = "btn";
+		if (this.info.type === 3) type = "slct";
 		if ((type === "btn" && !this.info.url) || type === "slct") {
-			const id = BetterComponent.#nextID
+			const id = BetterComponent.#nextID;
 			/**
 			 * @type {string | null}
 			 */
@@ -26,12 +24,13 @@ class BetterComponent {
 		}
 		else this.id = null;
 		/**
-		 * @type {((interaction: import("thunderstorm").MessageComponentInteraction | import("thunderstorm").SelectMenuInteraction, component: BetterComponent) => unknown) | null}
+		 * @type {((interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown) | null}
 		 */
 		this.callback = null;
-		const data = Object.assign({}, info, { customId: this.id || undefined })
-		/** @type {import("thunderstorm").MessageButton | import("thunderstorm").MessageSelectMenu} */
-		this.component = type === "btn" ? new Discord.MessageButton(data) : new Discord.MessageSelectMenu(data);
+		const data = Object.assign({}, info, { custom_id: this.id || undefined });
+		if (!this.id) delete data.custom_id;
+		/** @type {import("discord-typings").Button | import("discord-typings").SelectMenu} */
+		this.component = data;
 	}
 
 	/**
@@ -46,7 +45,7 @@ class BetterComponent {
 	}
 
 	/**
-	 * @param {(interaction: import("thunderstorm").MessageComponentInteraction | import("thunderstorm").SelectMenuInteraction, component: BetterComponent) => unknown} fn
+	 * @param {(interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown} fn
 	 */
 	setCallback(fn) {
 		this.callback = fn;
@@ -61,11 +60,11 @@ class BetterComponent {
 	/**
 	 * Handles data from interactions where it is a component that exists.
 	 * You will need to pong or respond to the interaction on your own.
-	 * @param {import("thunderstorm").MessageComponentInteraction | import("thunderstorm").SelectMenuInteraction} interaction
+	 * @param {import("discord-typings").Interaction} interaction
 	 */
 	static handle(interaction) {
-		if (!interaction.isMessageComponent()) return;
-		const btn = components.get(interaction.customId);
+		if (interaction.type !== 3) return;
+		const btn = components.get(interaction.data ? interaction.data.custom_id : undefined);
 		if (!btn) return;
 		if (!btn.callback) return;
 		btn.callback(interaction, btn);

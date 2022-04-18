@@ -1,7 +1,7 @@
 {
   "name": "callback-components",
   "version": "1.0.0",
-  "description": "A component interaction handler for ThunderStorm",
+  "description": "A component interaction handler",
   "main": "index.js",
   "types": "./typings/index.d.ts",
   "scripts": {
@@ -10,6 +10,9 @@
   "author": "PapiOphidian",
   "license": "MIT",
   "dependencies": {
-    "thunderstorm": "github:AmandaDiscord/ThunderStorm"
+    "discord-typings": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.25"
   }
 }
