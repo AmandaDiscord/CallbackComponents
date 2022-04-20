@@ -7,7 +7,7 @@ let idSequence = 0;
 
 class BetterComponent {
 	/**
-	 * @param {import("discord-typings").Button | import("discord-typings").SelectMenu} info Do not include custom_id. The lib assigns it for you
+	 * @param {Omit<import("discord-typings").Button | import("discord-typings").SelectMenu, "custom_id">} info Do not include custom_id. The lib assigns it for you
 	 */
 	constructor(info) {
 		this.info = info;
