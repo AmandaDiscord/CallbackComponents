@@ -5,6 +5,8 @@ const components = new Map();
 const randomString = Math.random().toString(36).substring(7); // This string is important to create truly random IDs across restarts as the sequencing may produce an identical ID.
 let idSequence = 0;
 
+const selectTypes = [3, 5, 6, 7, 8];
+
 class BetterComponent {
 	/**
 	 * @param {Omit<import("discord-typings").Button | import("discord-typings").SelectMenu, "custom_id">} info Do not include custom_id. The lib assigns it for you
@@ -13,7 +15,7 @@ class BetterComponent {
 		this.info = info;
 		/** @type {"btn" | "slct"} */
 		let type = "btn";
-		if (this.info.type === 3) type = "slct";
+		if (selectTypes.includes(this.info.type)) type = "slct";
 		if ((type === "btn" && !this.info.url) || type === "slct") {
 			const id = BetterComponent.#nextID;
 			/**
