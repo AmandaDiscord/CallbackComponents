@@ -10,6 +10,7 @@
 		"allowJs": true,
 		"declaration": true,
 		"emitDeclarationOnly": true,
-		"outDir": "./typings"
+		"outDir": "./typings",
+		"skipLibCheck": true
 	}
 }
