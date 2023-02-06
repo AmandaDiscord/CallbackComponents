@@ -164,9 +164,13 @@ const cc = {
 			return `menu-${randomString}-${idSequence++}`;
 		}
 
-		/** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
+		/**
+		 * @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn
+		 * @returns {this}
+		 */
 		setCallback(fn) {
 			this.callback = fn
+			return this
 		}
 
 		destroy() {
