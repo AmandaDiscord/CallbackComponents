@@ -1,9 +1,9 @@
 /**
- * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string} router
- * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown}} info
+ * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string} router
+ * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown}} info
  */
-export function setHandlers(router: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string, info: {
-    [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown;
+export function setHandlers(router: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string, info: {
+    [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown;
 }): void;
 /**
  * A method to encode custom data into the custom_id while being very space efficient.
