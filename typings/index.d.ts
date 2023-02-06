@@ -4,35 +4,30 @@
 export const components: Map<string, BetterComponent>;
 export let idSequence: number;
 export class BetterComponent {
-    /**
-     * @private
-     */
-    private static get "__#1@#nextID"();
+    static get "__#1@#nextID"(): string;
     /**
      * Handles data from interactions where it is a component that exists.
      * You will need to pong or respond to the interaction on your own.
-     * @param {import("discord-typings").Interaction} interaction
+     * @param {import("discord-api-types/v10").APIInteraction} interaction
      */
-    static handle(interaction: import("discord-typings").Interaction): void;
+    static handle(interaction: import("discord-api-types/v10").APIInteraction): void;
     /**
-     * @param {Omit<import("discord-typings").Button | import("discord-typings").SelectMenu, "custom_id">} info Do not include custom_id. The lib assigns it for you
+     * @param {Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">} info Do not include custom_id. The lib assigns it for you
      */
-    constructor(info: Omit<import("discord-typings").Button | import("discord-typings").SelectMenu, "custom_id">);
-    info: Omit<import("discord-typings").Button | import("discord-typings").SelectMenu, "custom_id">;
+    constructor(info: Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">);
+    /** @type {Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">} */
+    info: Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">;
+    id: string;
     /**
-     * @type {string | null}
+     * @type {((component: BetterComponent, user: string) => unknown) | null}
      */
-    id: string | null;
+    callback: (component: BetterComponent, user: string) => unknown;
+    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+    component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
+    toComponent(): import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
     /**
-     * @type {((interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown) | null}
+     * @param {(component: BetterComponent, user: string) => unknown} fn
      */
-    callback: (interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown;
-    /** @type {import("discord-typings").Button | import("discord-typings").SelectMenu} */
-    component: import("discord-typings").Button | import("discord-typings").SelectMenu;
-    toComponent(): import("discord-typings").Button | import("discord-typings").SelectMenu;
-    /**
-     * @param {(interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown} fn
-     */
-    setCallback(fn: (interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown): BetterComponent;
+    setCallback(fn: (component: BetterComponent, user: string) => unknown): BetterComponent;
     destroy(): BetterComponent;
 }

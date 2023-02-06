@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * @type {Map<string, BetterComponent>}
  */
@@ -9,35 +11,27 @@ const selectTypes = [3, 5, 6, 7, 8];
 
 class BetterComponent {
 	/**
-	 * @param {Omit<import("discord-typings").Button | import("discord-typings").SelectMenu, "custom_id">} info Do not include custom_id. The lib assigns it for you
+	 * @param {Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">} info Do not include custom_id. The lib assigns it for you
 	 */
 	constructor(info) {
+		/** @type {Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">} */
 		this.info = info;
 		/** @type {"btn" | "slct"} */
 		let type = "btn";
 		if (selectTypes.includes(this.info.type)) type = "slct";
-		if ((type === "btn" && !this.info.url) || type === "slct") {
-			const id = BetterComponent.#nextID;
-			/**
-			 * @type {string | null}
-			 */
-			this.id = id;
-			components.set(this.id, this);
-		}
-		else this.id = null;
+		const id = BetterComponent.#nextID;
+		this.id = id;
+		components.set(this.id, this);
 		/**
-		 * @type {((interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown) | null}
+		 * @type {((component: BetterComponent, user: string) => unknown) | null}
 		 */
 		this.callback = null;
-		const data = Object.assign({}, info, { custom_id: this.id || undefined });
-		if (!this.id) delete data.custom_id;
-		/** @type {import("discord-typings").Button | import("discord-typings").SelectMenu} */
-		this.component = data;
+		/** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+		// @ts-ignore
+		this.component = Object.assign({ custom_id: this.id }, info);
 	}
 
-	/**
-	 * @private
-	 */
+	// @ts-ignore
 	static get #nextID() {
 		return `menu-${randomString}-${idSequence++}`;
 	}
@@ -47,7 +41,7 @@ class BetterComponent {
 	}
 
 	/**
-	 * @param {(interaction: import("discord-typings").Interaction, component: BetterComponent) => unknown} fn
+	 * @param {(component: BetterComponent, user: string) => unknown} fn
 	 */
 	setCallback(fn) {
 		this.callback = fn;
@@ -62,14 +56,14 @@ class BetterComponent {
 	/**
 	 * Handles data from interactions where it is a component that exists.
 	 * You will need to pong or respond to the interaction on your own.
-	 * @param {import("discord-typings").Interaction} interaction
+	 * @param {import("discord-api-types/v10").APIInteraction} interaction
 	 */
 	static handle(interaction) {
 		if (interaction.type !== 3) return;
 		const btn = components.get(interaction.data ? interaction.data.custom_id : undefined);
 		if (!btn) return;
 		if (!btn.callback) return;
-		btn.callback(interaction, btn);
+		btn.callback(btn, interaction.user ? interaction.user.id : interaction.member.user.id);
 	}
 }
 
