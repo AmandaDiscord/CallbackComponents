@@ -1,6 +1,8 @@
-/** @type {{ [route: string]: (button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => unknown}} */
+// @ts-check
+
+/** @type {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown}} */
 let handlers = {};
-/** @type {(button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => string} */
+/** @type {(button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string} */
 let routeHandler = (button) => button.custom_id;
 
 /**
@@ -13,10 +15,10 @@ const isObject = (item) => typeof item === "object" && !Array.isArray(item) && i
 const delimiter = "�";
 const forbiddenKeys = ["__proto__", "prototype"];
 
-module.exports = {
+const cc = {
 	/**
-	 * @param {(button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => string} router
-	 * @param {{ [route: string]: (button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => unknown}} info
+	 * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string} router
+	 * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown}} info
 	 */
 	setHandlers(router, info) {
 		routeHandler = router;
@@ -31,10 +33,10 @@ module.exports = {
 	 */
 	encode(info) {
 		let rt = "";
-		/** @param {string} item */
+		/** @param {any} item */
 		const push = (item) => {
-			if (isObject(item)) rt += `{${BetterComponent.encode(item)}}`; // obj
-			else if (Array.isArray(item)) rt += `[${item.map((i, ind, arr) => isObject(i) ? `{${BetterComponent.encode(i)}}` : `${BetterComponent.encode(i)}${ind !== arr.length - 1 ? delimiter : ""}`).join("")}]`; // array
+			if (isObject(item)) rt += `{${cc.encode(item)}}`; // obj
+			else if (Array.isArray(item)) rt += `[${item.map((i, ind, arr) => isObject(i) ? `{${cc.encode(i)}}` : `${cc.encode(i)}${ind !== arr.length - 1 ? delimiter : ""}`).join("")}]`; // array
 			else if (item === null) rt += "n"; // nil
 			else if (typeof item === "bigint") rt += `b${item}`; // bigint
 			else if (typeof item === "undefined") rt += "v"; // void
@@ -59,12 +61,15 @@ module.exports = {
 
 	/**
 	 * @template {"object" | "array"} T
+	 * @template {T extends "object" ? Record<string, any> : Array<any>} R
 	 * @param {string} str
 	 * @param {T} [type] The root type being passed. Should only be used internally
-	 * @returns {T extends "object" ? Record<string, any> : Array<any>}
+	 * @returns {R}
 	 */
+	// @ts-ignore
 	decode(str, type = "object") {
-		/** @type {T extends "object" ? Record<string, any> : Array<any>} */
+		/** @type {R} */
+		// @ts-ignore
 		const rt = type === "object" ? {} : [];
 		let text = str;
 		while (text.length) {
@@ -86,11 +91,11 @@ module.exports = {
 				text = text.slice(endToUse + 1);
 			} else if (text[0] === "{") {
 				const closingIndex = findClosing(text, 0, "}");
-				actualValue = BetterComponent.decode(text.slice(1, closingIndex));
+				actualValue = cc.decode(text.slice(1, closingIndex));
 				text = text.slice(closingIndex + 1);
 			} else if (text[0] === "[") {
 				const closingIndex = findClosing(text, 0, "]");
-				actualValue = BetterComponent.decode(text.slice(1, closingIndex), "array");
+				actualValue = cc.decode(text.slice(1, closingIndex), "array");
 				text = text.slice(closingIndex + 1);
 			} else if (text[0] === "t") {
 				actualValue = true;
@@ -119,7 +124,7 @@ module.exports = {
 		return rt;
 	},
 
-	/** @param {import("discord-typings").Interaction} interaction */
+	/** @param {import("discord-api-types/v10").APIInteraction} interaction */
 	handle(interaction) {
 		if (interaction.type !== 3 || !interaction.data) return;
 		const route = routeHandler(interaction.data);
@@ -127,6 +132,8 @@ module.exports = {
 		handlers[route](interaction.data);
 	}
 }
+
+module.exports = cc
 
 /**
  * @param {string} text

@@ -1,9 +1,9 @@
 /**
- * @param {(button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => string} router
- * @param {{ [route: string]: (button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => unknown}} info
+ * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string} router
+ * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown}} info
  */
-export function setHandlers(router: (button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => string, info: {
-    [route: string]: (button: import("discord-typings").ButtonAsNotStyleLink | import("discord-typings").SelectMenu) => unknown;
+export function setHandlers(router: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string, info: {
+    [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown;
 }): void;
 /**
  * A method to encode custom data into the custom_id while being very space efficient.
@@ -14,10 +14,11 @@ export function setHandlers(router: (button: import("discord-typings").ButtonAsN
 export function encode(info: Record<string, any>): string;
 /**
  * @template {"object" | "array"} T
+ * @template {T extends "object" ? Record<string, any> : Array<any>} R
  * @param {string} str
  * @param {T} [type] The root type being passed. Should only be used internally
- * @returns {T extends "object" ? Record<string, any> : Array<any>}
+ * @returns {R}
  */
-export function decode<T extends "object" | "array">(str: string, type?: T): T extends "object" ? Record<string, any> : any[];
-/** @param {import("discord-typings").Interaction} interaction */
-export function handle(interaction: import("discord-typings").Interaction): void;
+export function decode<T extends "object" | "array", R extends T extends "object" ? Record<string, any> : any[]>(str: string, type?: T): R;
+/** @param {import("discord-api-types/v10").APIInteraction} interaction */
+export function handle(interaction: import("discord-api-types/v10").APIInteraction): void;
