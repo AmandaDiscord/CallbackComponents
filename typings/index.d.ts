@@ -1,22 +1,22 @@
 export class BetterComponent {
     static get "__#1@#nextID"(): string;
     /**
-     * @param {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} info
+     * @param {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} info
      * @param {Record<string, any>} [extraEncodedInfo]
      */
-    constructor(info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>, extraEncodedInfo?: Record<string, any>);
-    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-    info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+    constructor(info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, extraEncodedInfo?: Record<string, any>);
+    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+    info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
     id: string;
-    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-    component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+    component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
     /** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
     callback: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: {
-        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
         id: string;
-        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
         callback: any;
         /** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
         setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: any) => unknown): void;
@@ -24,22 +24,22 @@ export class BetterComponent {
     }) => unknown;
     /** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
     setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: {
-        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
         id: string;
-        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
         /** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
         callback: any;
         setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: any) => unknown): void;
         destroy(): any;
     }) => unknown): void;
     destroy(): {
-        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
         id: string;
-        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
-        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent;
         /** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
         callback: any;
         /** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
