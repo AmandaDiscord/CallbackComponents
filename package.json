@@ -1,5 +1,5 @@
 {
-  "name": "global-callback-components",
+  "name": "callback-components",
   "version": "1.0.0",
   "description": "A component interaction handler",
   "main": "index.js",

@@ -1,9 +1,16 @@
 // @ts-check
 
-/** @type {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown}} */
+/** @type {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => unknown}} */
 let handlers = {};
-/** @type {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string} */
-let routeHandler = (button) => button.custom_id;
+/** @type {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => string} */
+let routeHandler = (button, _) => button.custom_id;
+
+/** @type {Map<string, typeof cc.BetterComponent["prototype"]>} */
+const components = new Map();
+const randomString = Math.random().toString(36).substring(7); // This string is important to create truly random IDs across restarts as the sequencing may produce an identical ID.
+let idSequence = 0;
+/** @type {[2, 3, 5, 6, 7, 8]} */
+const bcAcceptableTypes = [2, 3, 5, 6, 7, 8];
 
 /**
  * @template {any} T
@@ -17,8 +24,8 @@ const forbiddenKeys = ["__proto__", "prototype"];
 
 const cc = {
 	/**
-	 * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string} router
-	 * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown}} info
+	 * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => string} router
+	 * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => unknown}} info
 	 */
 	setHandlers(router, info) {
 		routeHandler = router;
@@ -127,9 +134,44 @@ const cc = {
 	/** @param {import("discord-api-types/v10").APIInteraction} interaction */
 	handle(interaction) {
 		if (interaction.type !== 3 || !interaction.data) return;
-		const route = routeHandler(interaction.data, interaction.user ? interaction.user.id : interaction.member.user.id);
-		if (!handlers[route]) return;
-		handlers[route](interaction.data, interaction.user ? interaction.user.id : interaction.member.user.id);
+		if (bcAcceptableTypes.includes(interaction.data.component_type)) {
+			const decoded = cc.decode(interaction.data.custom_id, "object");
+			const btn = components.get(decoded?.mid ?? interaction.data.custom_id);
+			if (btn && btn.callback) btn.callback(interaction, btn);
+		}
+		const route = routeHandler(interaction.data, interaction.user ? interaction.user : interaction.member.user);
+		if (handlers[route]) handlers[route](interaction.data, interaction.user ? interaction.user : interaction.member.user);
+	},
+
+	BetterComponent: class BetterComponent {
+		/**
+		 * @param {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} info
+		 * @param {Record<string, any>} [extraEncodedInfo]
+		 */
+		constructor(info, extraEncodedInfo) {
+			/** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+			this.info = info;
+			this.id = BetterComponent.#nextID;
+			components.set(this.id, this);
+			/** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+			this.component = Object.assign({ custom_id: cc.encode({ mid: this.id, ...(extraEncodedInfo || {}) }) }, this.info)
+			/** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
+			this.callback = null
+		}
+
+		static get #nextID() {
+			return `menu-${randomString}-${idSequence++}`;
+		}
+
+		/** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
+		setCallback(fn) {
+			this.callback = fn
+		}
+
+		destroy() {
+			components.delete(this.id);
+			return this
+		}
 	}
 }
 
