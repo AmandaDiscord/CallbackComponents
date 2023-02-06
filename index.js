@@ -1,8 +1,8 @@
 // @ts-check
 
-/** @type {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown}} */
+/** @type {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown}} */
 let handlers = {};
-/** @type {(button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string} */
+/** @type {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string} */
 let routeHandler = (button) => button.custom_id;
 
 /**
@@ -17,8 +17,8 @@ const forbiddenKeys = ["__proto__", "prototype"];
 
 const cc = {
 	/**
-	 * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData) => string} router
-	 * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData) => unknown}} info
+	 * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string} router
+	 * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown}} info
 	 */
 	setHandlers(router, info) {
 		routeHandler = router;
@@ -127,9 +127,9 @@ const cc = {
 	/** @param {import("discord-api-types/v10").APIInteraction} interaction */
 	handle(interaction) {
 		if (interaction.type !== 3 || !interaction.data) return;
-		const route = routeHandler(interaction.data);
+		const route = routeHandler(interaction.data, interaction.user ? interaction.user.id : interaction.member.user.id);
 		if (!handlers[route]) return;
-		handlers[route](interaction.data);
+		handlers[route](interaction.data, interaction.user ? interaction.user.id : interaction.member.user.id);
 	}
 }
 
