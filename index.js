@@ -145,15 +145,16 @@ const cc = {
 
 	BetterComponent: class BetterComponent {
 		/**
-		 * @param {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} info
+		 * @param {BetterComponent["info"]} info
 		 * @param {Record<string, any>} [extraEncodedInfo]
 		 */
 		constructor(info, extraEncodedInfo) {
-			/** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+			/** @type {Omit<import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent, "custom_id">} */
 			this.info = info;
 			this.id = BetterComponent.#nextID;
 			components.set(this.id, this);
 			/** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APISelectMenuComponent} */
+			// @ts-ignore
 			this.component = Object.assign({ custom_id: cc.encode({ mid: this.id, ...(extraEncodedInfo || {}) }) }, this.info)
 			/** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
 			this.callback = null
