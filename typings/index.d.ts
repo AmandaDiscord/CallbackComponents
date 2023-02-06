@@ -1,9 +1,58 @@
+export class BetterComponent {
+    static get "__#1@#nextID"(): string;
+    /**
+     * @param {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} info
+     * @param {Record<string, any>} [extraEncodedInfo]
+     */
+    constructor(info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>, extraEncodedInfo?: Record<string, any>);
+    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+    info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+    id: string;
+    /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+    component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+    /** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
+    callback: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: {
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        id: string;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        callback: any;
+        /** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
+        setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: any) => unknown): void;
+        destroy(): any;
+    }) => unknown;
+    /** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
+    setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: {
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        id: string;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
+        callback: any;
+        setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: any) => unknown): void;
+        destroy(): any;
+    }) => unknown): void;
+    destroy(): {
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+        info: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        id: string;
+        /** @type {import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent} */
+        component: import("discord-api-types/v10").APIButtonComponentWithCustomId | import("discord-api-types/v10").APIBaseSelectMenuComponent<any>;
+        /** @type {null | ((interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown)} */
+        callback: any;
+        /** @param {(interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: BetterComponent) => unknown} fn */
+        setCallback(fn: (interaction: import("discord-api-types/v10").APIMessageComponentInteraction, component: any) => unknown): void;
+        destroy(): any;
+    };
+}
 /**
- * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string} router
- * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown}} info
+ * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => string} router
+ * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => unknown}} info
  */
-export function setHandlers(router: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => string, info: {
-    [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: string) => unknown;
+export declare function setHandlers(router: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => string, info: {
+    [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => unknown;
 }): void;
 /**
  * A method to encode custom data into the custom_id while being very space efficient.
@@ -11,7 +60,7 @@ export function setHandlers(router: (button: import("discord-api-types/v10").API
  * @param {Record<string, any>} info
  * @returns {string}
  */
-export function encode(info: Record<string, any>): string;
+export declare function encode(info: Record<string, any>): string;
 /**
  * @template {"object" | "array"} T
  * @template {T extends "object" ? Record<string, any> : Array<any>} R
@@ -19,6 +68,6 @@ export function encode(info: Record<string, any>): string;
  * @param {T} [type] The root type being passed. Should only be used internally
  * @returns {R}
  */
-export function decode<T extends "object" | "array", R extends T extends "object" ? Record<string, any> : any[]>(str: string, type?: T): R;
+export declare function decode<T extends "object" | "array", R extends T extends "object" ? Record<string, any> : any[]>(str: string, type?: T): R;
 /** @param {import("discord-api-types/v10").APIInteraction} interaction */
-export function handle(interaction: import("discord-api-types/v10").APIInteraction): void;
+export declare function handle(interaction: import("discord-api-types/v10").APIInteraction): void;
