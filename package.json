@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@amanda/scratch": "github:AmandaDiscord/Scratch#3cf54142d00e2d36fbcb984a160024ed128be4a9",
-    "discord-api-types": "^0.38.26"
+    "discord-api-types": "^0.38.28"
   },
   "devDependencies": {
     "@types/node": "^24.6.0"

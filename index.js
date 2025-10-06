@@ -57,7 +57,6 @@ class BetterComponent {
 
 const cc = {
 	/**
-	 *
 	 * @param {(button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => string} router
 	 * @param {{ [route: string]: (button: import("discord-api-types/v10").APIMessageComponentInteractionData, user: import("discord-api-types/v10").APIUser) => unknown }} info
 	 */
